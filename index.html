@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bodega Online</title>
+<link rel="icon" href="img/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Cliente de Supabase (conexión a la base de datos) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--g:#2e9a78;--t:#1c6577;--bg:#f6fbfa;--l:#dcebe8;--m:#7b8a90;--o:#ee8a5a;--r:#e0526b}
+*{box-sizing:border-box}body{margin:0;font:14px Inter,sans-serif;background:var(--bg);color:#27363b}
+a{color:inherit;text-decoration:none}h1,h2,h3{color:var(--t);margin:0}
+.wrap{max-width:1100px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--l)}
+.top{display:flex;align-items:center;gap:24px;padding:12px 0}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--t)}.logo i{font-style:normal;width:42px;height:42px;border-radius:50%;background:#e3f3ec;display:grid;place-items:center;font-size:22px;border:2px solid var(--g)}
+.search{flex:1;border:1px solid var(--l);border-radius:20px;padding:9px 16px;background:var(--bg);font:inherit}
+.acc,.cart{color:var(--t);font-weight:500;position:relative}.cart b{position:absolute;top:-8px;right:-12px;background:var(--o);color:#fff;border-radius:50%;font-size:10px;width:16px;height:16px;display:grid;place-items:center}
+nav{display:flex;justify-content:center;gap:56px;padding:4px 0 10px;font-size:13px}nav a.on{color:var(--g);font-weight:700;border-bottom:2px solid var(--g)}
+.h2{display:flex;align-items:center;gap:10px;margin:26px 0 18px;font-size:19px}.h2 span{background:var(--g);color:#fff;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px}
+.btn{background:var(--g);color:#fff;border:0;border-radius:6px;padding:9px 14px;font:600 13px Inter;cursor:pointer;display:block;text-align:center;width:100%}.btn:hover{filter:brightness(.93)}
+.hero{display:grid;grid-template-columns:1fr 1fr;background:#fff1d6;border-radius:10px;overflow:hidden;margin-top:18px}.hero div{padding:44px}.hero h1{font-size:32px;line-height:1.2}.hero p{color:var(--m);margin:14px 0 20px}.hero .btn{width:auto;display:inline-block;padding:10px 22px}.hero .pic{background:#fbe3b8;display:grid;place-items:center;font-size:110px;padding:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:14px}.tile{border-radius:10px;padding:16px 8px;text-align:center;font-weight:600;font-size:13px}.tile i{display:block;font-style:normal;font-size:44px;margin-bottom:6px}
+.grid{display:grid;gap:14px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+.card{position:relative;background:#fff;border:1px solid var(--l);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:5px}.card b{color:var(--t);font-size:12px}.card .img{height:110px;border-radius:6px;display:grid;place-items:center;font-size:56px}
+.pr{font-weight:700;font-size:15px;color:var(--t)}.pr s{color:var(--m);font-weight:400;font-size:11px}.pr .off{color:var(--r)}.st{color:#f2b134;font-size:11px}.st,.ok{margin:0}.ok{color:var(--g)}
+.fav{position:absolute;right:8px;top:6px;background:none;border:0;color:#cbd6d8;font-size:16px;cursor:pointer}.fav.on{color:var(--r)}.tag{position:absolute;left:8px;top:8px;background:var(--r);color:#fff;border-radius:10px;font-size:10px;padding:2px 7px;z-index:1}
+.side{display:grid;grid-template-columns:190px 1fr;gap:22px}.box{background:#fff;border:1px solid var(--l);border-radius:8px;padding:16px}.side a{display:block;padding:8px 10px;border-radius:6px;margin-top:4px}.side a.on{background:#e3f3ec;color:var(--g);font-weight:600}
+.det{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-bottom:30px}.big{height:340px;border-radius:10px;display:grid;place-items:center;font-size:150px}.price{font-size:28px;font-weight:700;color:var(--t);margin:8px 0}.mut{color:var(--m)}
+.qty{display:inline-flex;border:1px solid var(--l);border-radius:6px;margin:12px 0;align-items:center}.qty button{border:0;background:none;width:30px;height:30px;font-size:16px;cursor:pointer}.qty span{min-width:30px;text-align:center}
+.cartw{display:grid;grid-template-columns:1fr 290px;gap:22px}table{width:100%;background:#fff;border:1px solid var(--l);border-radius:8px;border-collapse:collapse}th{text-align:left;font-size:11px;color:var(--m);padding:10px}td{padding:10px;border-top:1px solid var(--l)}.mini{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:6px;margin-right:8px;vertical-align:middle;font-size:20px}.x{border:0;background:none;cursor:pointer}
+.box p{display:flex;justify-content:space-between}.tot{font-weight:700;border-top:1px solid var(--l);padding-top:10px}
+.promo{background:#fff6ec;border:1px solid #fbe3cf;border-radius:14px;padding:18px}.count{display:flex;gap:6px;align-items:center;justify-content:flex-end;color:var(--m);font-size:12px}.count b{background:#fde1d6;color:var(--r);border-radius:6px;padding:6px 9px;font-size:16px}
+form label{display:block;font-size:12px;font-weight:600;color:var(--t);margin-top:12px}form input,form select,form textarea{width:100%;padding:9px;border:1px solid var(--l);border-radius:6px;font:inherit;margin-top:4px}.opt{display:flex;gap:10px;border:1px solid var(--l);border-radius:6px;padding:12px;margin-top:10px;font-weight:500;cursor:pointer}.opt input{width:auto;margin:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ok-box{text-align:center;padding:40px;background:#fffdf5;border-radius:10px}.ok-box i{font-style:normal;display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;font-size:32px}.ok-box .n{background:#eaf4f3;border-radius:6px;padding:12px;margin:14px auto;max-width:320px}
+.img,.big,.mini{overflow:hidden}.img img,.big img,.mini img{width:100%;height:100%;object-fit:contain}
+.logo i{overflow:hidden}.logo i img{width:100%;height:100%;object-fit:contain}.hero .pic{overflow:hidden;min-height:240px}.hero .pic img{width:100%;height:100%;object-fit:cover}.tile i img{width:64px;height:64px;object-fit:contain}
+footer{border-top:1px solid var(--l);margin-top:40px;padding:14px 0 24px;font-size:11px;color:var(--m);display:flex;justify-content:space-between}footer a{color:var(--g)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:20px;opacity:0;transition:.25s;pointer-events:none}#toast.on{opacity:1}
+@media(max-width:800px){.g3,.g4,.g5,.hero,.det,.side,.cartw,.two{grid-template-columns:1fr 1fr}.hero,.det,.side,.cartw{grid-template-columns:1fr}nav{gap:18px;flex-wrap:wrap}.top{flex-wrap:wrap}}
+</style></head><body><div id="app"></div><div id="toast"></div>
+<script>
+/* ===== 1. CONFIGURACIÓN ===== */
+const STORE_NAME='Bodega Isnega y Sirel', SHIPPING=3;
+// Pega aquí los datos de tu proyecto de Supabase (Settings > API). Si quedan vacíos, la web usa los datos de prueba.
+const SUPABASE_URL='https://tvuyzznpnrpgfbxrmsvc.supabase.co/rest/v1/', SUPABASE_KEY='sb_publishable_uIk4hGzUo-9Erik9sVqriQ_R35rO8XE';
+const sb=(SUPABASE_URL&&SUPABASE_KEY&&window.supabase)?supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+
+/* ===== 2. DATOS DE PRUEBA (mismos que supabase.sql) ===== */
+// cats: slug, nombre, emoji, color | prods: id, categoría, nombre, precio, precio anterior, emoji, destacado
+let cats=[{"slug": "abarrotes", "n": "Abarrotes", "e": "🛒", "col": "#e3f3ec"}, {"slug": "frutas", "n": "Frutas", "e": "🍎", "col": "#fff3d6"}, {"slug": "bebidas", "n": "Bebidas", "e": "🥤", "col": "#e0f0fb"}, {"slug": "panes", "n": "Panes", "e": "🥐", "col": "#fde8dc"}, {"slug": "limpieza", "n": "Limpieza", "e": "🧴", "col": "#eee3fb"}, {"slug": "higiene", "n": "Higiene", "e": "🧼", "col": "#dff3f7"}, {"slug": "lacteos", "n": "Lácteos", "e": "🥛", "col": "#eef3fb"}, {"slug": "congelados", "n": "Congelados", "e": "🧊", "col": "#e6f0fa"}, {"slug": "carnes", "n": "Carnes", "e": "🥩", "col": "#fde4ea"}, {"slug": "piqueos", "n": "Piqueos", "e": "🍿", "col": "#fff0d9"}], prods=[{"id": 1, "c": "abarrotes", "n": "Espaguetis 500 g", "p": 3.5, "o": 0, "e": "🍝", "f": false}, {"id": 2, "c": "abarrotes", "n": "Macarrones 500 g", "p": 3, "o": 0, "e": "🍝", "f": false}, {"id": 3, "c": "abarrotes", "n": "Aceite 1 L", "p": 8, "o": 9.5, "e": "🫒", "f": true}, {"id": 4, "c": "abarrotes", "n": "Azúcar 1 kg", "p": 4, "o": 0, "e": "🧂", "f": false}, {"id": 5, "c": "abarrotes", "n": "Atún en conserva 170 g", "p": 5.5, "o": 0, "e": "🐟", "f": true}, {"id": 6, "c": "abarrotes", "n": "Arroz 1 kg", "p": 4.2, "o": 0, "e": "🍚", "f": false}, {"id": 7, "c": "frutas", "n": "Manzanas rojas 1 kg", "p": 5, "o": 0, "e": "🍎", "f": true}, {"id": 8, "c": "frutas", "n": "Plátano de seda 1 kg", "p": 3.8, "o": 0, "e": "🍌", "f": false}, {"id": 9, "c": "frutas", "n": "Naranjas 1 kg", "p": 3.5, "o": 0, "e": "🍊", "f": false}, {"id": 10, "c": "frutas", "n": "Uvas 500 g", "p": 6, "o": 0, "e": "🍇", "f": false}, {"id": 11, "c": "bebidas", "n": "Gaseosa Coca-Cola 1.5 L", "p": 6, "o": 0, "e": "🥤", "f": false}, {"id": 12, "c": "bebidas", "n": "Agua mineral 625 ml", "p": 1.5, "o": 0, "e": "💧", "f": false}, {"id": 13, "c": "bebidas", "n": "Jugo de naranja 1 L", "p": 5.5, "o": 0, "e": "🧃", "f": false}, {"id": 14, "c": "bebidas", "n": "Té helado 500 ml", "p": 3, "o": 0, "e": "🍵", "f": false}, {"id": 15, "c": "panes", "n": "Pan francés x6", "p": 2, "o": 0, "e": "🥖", "f": false}, {"id": 16, "c": "panes", "n": "Pan de molde", "p": 6.5, "o": 0, "e": "🍞", "f": false}, {"id": 17, "c": "panes", "n": "Croissant x2", "p": 3.5, "o": 0, "e": "🥐", "f": false}, {"id": 18, "c": "panes", "n": "Keke de vainilla", "p": 4.5, "o": 0, "e": "🍰", "f": false}, {"id": 19, "c": "limpieza", "n": "Detergente 800 g", "p": 9, "o": 0, "e": "🧺", "f": false}, {"id": 20, "c": "limpieza", "n": "Lejía 1 L", "p": 4.5, "o": 0, "e": "🧴", "f": false}, {"id": 21, "c": "limpieza", "n": "Lavavajilla 500 ml", "p": 5, "o": 0, "e": "🍽️", "f": false}, {"id": 22, "c": "limpieza", "n": "Papel higiénico x4", "p": 6, "o": 0, "e": "🧻", "f": false}, {"id": 23, "c": "higiene", "n": "Jabón de tocador", "p": 2.5, "o": 0, "e": "🧼", "f": false}, {"id": 24, "c": "higiene", "n": "Shampoo 400 ml", "p": 12, "o": 0, "e": "🧴", "f": false}, {"id": 25, "c": "higiene", "n": "Pasta dental 90 g", "p": 5.5, "o": 0, "e": "🪥", "f": false}, {"id": 26, "c": "higiene", "n": "Desodorante", "p": 7.5, "o": 0, "e": "🧴", "f": false}, {"id": 27, "c": "lacteos", "n": "Leche Gloria 170 g", "p": 3, "o": 0, "e": "🥛", "f": true}, {"id": 28, "c": "lacteos", "n": "Yogurt 1 L", "p": 6.5, "o": 0, "e": "🥣", "f": false}, {"id": 29, "c": "lacteos", "n": "Queso fresco 250 g", "p": 8.5, "o": 0, "e": "🧀", "f": false}, {"id": 30, "c": "lacteos", "n": "Mantequilla 100 g", "p": 4.5, "o": 0, "e": "🧈", "f": false}, {"id": 31, "c": "congelados", "n": "Nuggets de pollo 500 g", "p": 14, "o": 0, "e": "🍗", "f": false}, {"id": 32, "c": "congelados", "n": "Helado de vainilla 1 L", "p": 11, "o": 0, "e": "🍦", "f": false}, {"id": 33, "c": "congelados", "n": "Papas fritas 1 kg", "p": 9.5, "o": 0, "e": "🍟", "f": false}, {"id": 34, "c": "congelados", "n": "Hamburguesas x4", "p": 13, "o": 0, "e": "🍔", "f": false}, {"id": 35, "c": "carnes", "n": "Pechuga de pollo 1 kg", "p": 16, "o": 0, "e": "🍗", "f": false}, {"id": 36, "c": "carnes", "n": "Carne molida 500 g", "p": 13.5, "o": 0, "e": "🥩", "f": false}, {"id": 37, "c": "carnes", "n": "Chuletas de cerdo 1 kg", "p": 18, "o": 0, "e": "🥓", "f": false}, {"id": 38, "c": "carnes", "n": "Salchichas x10", "p": 8, "o": 0, "e": "🌭", "f": false}, {"id": 39, "c": "piqueos", "n": "Papas Lay's 90 g", "p": 3.5, "o": 4.5, "e": "🥔", "f": false}, {"id": 40, "c": "piqueos", "n": "Galletas Oreo 36 g", "p": 2.5, "o": 3, "e": "🍪", "f": true}, {"id": 41, "c": "piqueos", "n": "Galletas Soda 6 pack", "p": 4, "o": 5, "e": "🍘", "f": false}, {"id": 42, "c": "piqueos", "n": "Caramelos surtidos", "p": 2.5, "o": 0, "e": "🍬", "f": false}, {"id": 43, "c": "piqueos", "n": "Chocolate", "p": 3, "o": 0, "e": "🍫", "f": false}];
+
+/* ===== 3. UTILIDADES Y ESTADO ===== */
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+let cart=store.get('cart',{}), favs=store.get('favs',[]), tm;
+const $=s=>document.querySelector(s), money=n=>'S/ '+n.toFixed(2);
+const P=id=>prods.find(x=>x.id==id), C=s=>cats.find(x=>x.slug==s)||cats[0];
+// Imágenes: im() busca img/<nombre>.png, si no existe prueba .jpg, y si tampoco, muestra el emoji de respaldo.
+const im=(b,fb,alt='')=>`<img src="${b}.png" alt="${alt}" onerror="if(!this.dataset.t){this.dataset.t=1;this.src='${b}.jpg'}else{this.replaceWith('${fb}')}">`;
+// Foto de producto: usa la columna 'imagen' si existe; si no, img/<id>
+const pic=p=>p.i?`<img src="${p.i}" alt="${p.n}" onerror="this.replaceWith('${p.e}')">`:im('img/'+p.id,p.e,p.n);
+const count=()=>Object.values(cart).reduce((a,b)=>a+b,0);
+const subtotal=()=>Object.entries(cart).reduce((a,[id,q])=>a+P(id).p*q,0);
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1400)}
+
+/* ===== 4. CARGA DESDE LA BASE DE DATOS ===== */
+async function load(){
+  if(!sb)return;
+  try{
+    const [c,p]=await Promise.all([sb.from('categorias').select('*').order('id'),sb.from('productos').select('*').order('id')]);
+    if(c.data?.length&&p.data?.length){
+      cats=c.data.map(x=>({slug:x.slug,n:x.nombre,e:x.emoji,col:x.color}));
+      const sl=Object.fromEntries(c.data.map(x=>[x.id,x.slug]));
+      prods=p.data.map(x=>({id:x.id,c:sl[x.categoria_id],n:x.nombre,p:+x.precio,o:+x.precio_anterior||0,e:x.emoji,i:x.imagen,f:x.destacado}));
+    }
+  }catch(e){console.warn('Sin conexión a Supabase, usando datos de prueba',e)}
+}
+
+/* ===== 5. ACCIONES ===== */
+function add(id,q=1){cart[id]=(cart[id]||0)+q;store.set('cart',cart);$('#cb').textContent=count();toast('Producto agregado al carrito')}
+function sq(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];store.set('cart',cart);render()}
+function dq(d){$('#q').textContent=Math.max(1,+$('#q').textContent+d)}
+function fav(id,b){favs=favs.includes(id)?favs.filter(x=>x!=id):[...favs,id];store.set('favs',favs);b.classList.toggle('on')}
+async function order(e){ // Guarda el pedido en las tablas pedidos y detalle_pedido
+  e.preventDefault();const f=Object.fromEntries(new FormData(e.target)),id=crypto.randomUUID(),total=subtotal()+SHIPPING;
+  const items=Object.entries(cart).map(([pid,q])=>({pedido_id:id,producto_id:+pid,cantidad:q,precio:P(pid).p}));
+  let saved=false;
+  if(sb){try{
+    const a=await sb.from('pedidos').insert({id,nombre:f.nombre,direccion:f.direccion,departamento:f.departamento,provincia:f.provincia,distrito:f.distrito,metodo_pago:f.pago,total});if(a.error)throw a.error;
+    const b=await sb.from('detalle_pedido').insert(items);if(b.error)throw b.error;saved=true;
+  }catch(err){console.error(err);toast('No se pudo guardar en la base de datos')}}
+  const o={n:id.slice(0,6).toUpperCase(),total,saved,fecha:new Date().toLocaleDateString('es-PE')};
+  store.set('orders',[o,...store.get('orders',[])]);store.set('last',o);cart={};store.set('cart',cart);location.hash='#/gracias';
+}
+async function msg(e){e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
+  if(sb){const r=await sb.from('mensajes').insert(f);if(r.error)return toast('No se pudo enviar')}
+  e.target.reset();toast('Mensaje enviado, gracias')}
+function timer(){const t=()=>{const d=new Date(),n=new Date(d);n.setHours(24,0,0,0);const s=Math.floor((n-d)/1e3),v=[s/3600|0,s%3600/60|0,s%60].map(x=>String(x).padStart(2,'0'));['h','m','s'].forEach((k,i)=>{const e=$('#'+k);if(e)e.textContent=v[i]})};t();tm=setInterval(t,1000)}
+
+/* ===== 6. COMPONENTES ===== */
+const card=p=>`<div class="card"><button class="fav ${favs.includes(p.id)?'on':''}" onclick="fav(${p.id},this)">♥</button>${p.o?`<span class="tag">-${Math.round(100-p.p/p.o*100)}%</span>`:''}<a href="#/producto/${p.id}" class="img" style="background:${C(p.c).col}">${pic(p)}</a><b>${p.n}</b><div class="pr">${p.o?`<s>${money(p.o)}</s> `:''}<span class="${p.o?'off':''}">${money(p.p)}</span></div><div class="st">★★★★★ 4.8</div><button class="btn" onclick="add(${p.id})">Agregar</button></div>`;
+const NAV=[['','Inicio'],['categorias','Categorías'],['ofertas','Ofertas'],['nosotros','Nosotros'],['contacto','Contacto']];
+function layout(p,[num,title,body]){return`<header><div class="wrap"><div class="top"><a class="logo" href="#/"><i>${im('img/logo','🏪')}</i>${STORE_NAME}</a>
+<input class="search" placeholder="Buscar productos, marcas..." onkeydown="if(event.key=='Enter')location.hash='#/buscar/'+encodeURIComponent(this.value)">
+<a class="acc" href="#/cuenta">👤 Mi cuenta</a><a class="cart" href="#/carrito">🛒<b id="cb">${count()}</b></a></div>
+<nav>${NAV.map(([k,n])=>`<a href="#/${k}" class="${k==p?'on':''}">${n}</a>`).join('')}</nav></div></header>
+<main class="wrap">${title?`<h2 class="h2">${num?`<span>${num}</span>`:''}${title}</h2>`:''}${body}</main>
+<div class="wrap"><footer><span>${STORE_NAME} · Todo lo que necesitas, en un solo lugar</span><a href="#/contacto">Ayuda y contacto</a></footer></div>`}
+
+/* ===== 7. PÁGINAS (cada una devuelve [número, título, html]) ===== */
+function home(){return[0,'',`<section class="hero"><div><h1>Todo lo que necesitas, en un solo lugar</h1><p>Productos frescos, bebidas y artículos de primera necesidad para tu día a día.</p><a class="btn" href="#/categorias">Comprar ahora</a></div><div class="pic">${im('img/hero','🧺')}</div></section>
+<h3 style="margin:26px 0 14px">Compra por categoría</h3><div class="tiles">${cats.map(c=>`<a class="tile" href="#/categorias/${c.slug}" style="background:${c.col}"><i>${im('img/cat-'+c.slug,c.e)}</i>${c.n}</a>`).join('')}</div>
+<h2 class="h2"><span>4</span>Productos destacados</h2><div class="grid g5">${prods.filter(p=>p.f).slice(0,5).map(card).join('')}</div>`]}
+function cat(s){const c=C(s||cats[0].slug);return[2,'Categorías · Lista de productos',`<div class="side"><div class="box"><h3>Categorías</h3>${cats.map(x=>`<a href="#/categorias/${x.slug}" class="${x.slug==c.slug?'on':''}">${x.e} ${x.n}</a>`).join('')}</div><div><h3 style="margin-bottom:12px">${c.n}</h3><div class="grid g3">${prods.filter(p=>p.c==c.slug).map(card).join('')}</div></div></div>`]}
+function prod(id){const p=P(id);if(!p)return home();const rel=prods.filter(x=>x.c==p.c&&x.id!=p.id).slice(0,4);
+return[3,'Detalle del producto',`<div class="det"><div class="big" style="background:${C(p.c).col}">${pic(p)}</div><div><h1>${p.n}</h1><div class="price">${p.o?`<s class="mut" style="font-size:16px">${money(p.o)}</s> `:''}${money(p.p)}</div><p class="st">★★★★★ 4.8 (120 valoraciones)</p><p class="ok">✓ En stock</p><p class="mut">Producto de buena calidad de la categoría ${C(p.c).n}. Ideal para tu hogar.</p><div class="qty"><button onclick="dq(-1)">−</button><span id="q">1</span><button onclick="dq(1)">+</button></div><button class="btn" onclick="add(${p.id},+$('#q').textContent)">🛒 Agregar al carrito</button></div></div><h2 class="h2"><span>6</span>Productos relacionados</h2><div class="grid g4">${rel.map(card).join('')}</div><h2 class="h2"><span>7</span>También te podría interesar</h2><div class="grid g4">${prods.filter(x=>x.c!=p.c).sort(()=>Math.random()-.5).slice(0,4).map(card).join('')}</div>`]}
+function ofer(){return[5,'Ofertas especiales',`<div class="promo"><div class="count">Termina en: <b id="h">00</b>:<b id="m">00</b>:<b id="s">00</b></div><div class="grid g4" style="margin-top:12px">${prods.filter(p=>p.o).map(card).join('')}</div></div>`]}
+function bus(q){const r=prods.filter(p=>p.n.toLowerCase().includes(q.toLowerCase()));return[0,`Resultados para "${q}"`,r.length?`<div class="grid g4">${r.map(card).join('')}</div>`:'<p class="mut">No encontramos productos. Prueba con otra palabra o revisa las <a href="#/categorias" style="color:var(--g)">categorías</a>.</p>']}
+function nos(){return[0,'Nosotros',`<div class="box"><p>Somos una bodega de barrio con tienda online: alimentos, bebidas, frutas, piqueos y artículos de primera necesidad, con entrega rápida a tu domicilio.</p><p class="mut">Atención de lunes a domingo, de 7:00 a 21:00.</p></div>`]}
+function con(){return[0,'Contacto',`<div class="box" style="max-width:520px"><form onsubmit="msg(event)"><label>Nombre<input name="nombre" required></label><label>Correo<input name="correo" type="email" required></label><label>Mensaje<textarea name="mensaje" rows="4" required></textarea></label><br><button class="btn">Enviar mensaje</button></form></div>`]}
+function car(){const rows=Object.entries(cart).map(([id,q])=>{const p=P(id);return`<tr><td><span class="mini" style="background:${C(p.c).col}">${pic(p)}</span>${p.n}</td><td>${money(p.p)}</td><td><div class="qty" style="margin:0"><button onclick="sq(${id},-1)">−</button><span>${q}</span><button onclick="sq(${id},1)">+</button></div></td><td><b>${money(p.p*q)}</b></td><td><button class="x" onclick="sq(${id},-99)">🗑</button></td></tr>`}).join('');
+return[8,'Carrito de compras',count()?`<div class="cartw"><div><table><tr><th>PRODUCTO<th>PRECIO<th>CANTIDAD<th>TOTAL<th></tr>${rows}</table><p><a href="#/categorias" style="color:var(--g)">← Continuar comprando</a></p></div><aside class="box"><h3>Resumen de compra</h3><p>Subtotal<span>${money(subtotal())}</span></p><p>Envío<span>${money(SHIPPING)}</span></p><p class="tot">Total<span>${money(subtotal()+SHIPPING)}</span></p><a class="btn" href="#/pago">Finalizar compra</a></aside></div>`:'<p class="mut">Tu carrito está vacío. <a href="#/categorias" style="color:var(--g)">Ver productos</a></p>']}
+function pay(){if(!count())return car();return[9,'Método de pago y finalizar compra',`<form onsubmit="order(event)" class="two"><div class="box"><h3>Datos de envío</h3><label>Nombre completo<input name="nombre" required placeholder="Tu nombre"></label><label>Dirección<input name="direccion" required placeholder="Calle, número y referencia"></label><div class="two"><label>Departamento<input name="departamento" required></label><label>Provincia<input name="provincia" required></label></div><label>Distrito<input name="distrito" required></label></div>
+<div class="box"><h3>Método de pago</h3>${[['Tarjeta de débito o crédito','💳'],['Transferencia bancaria','🏦'],['Pago en efectivo','💵']].map(([n,i],k)=>`<label class="opt"><input type="radio" name="pago" value="${n}" ${k?'':'checked'}>${n}<span style="margin-left:auto">${i}</span></label>`).join('')}<p>Total a pagar <b>${money(subtotal()+SHIPPING)}</b></p><button class="btn">Confirmar pedido</button></div></form>`]}
+function gra(){const o=store.get('last',{n:'000000'});return[10,'Compra finalizada',`<div class="ok-box"><i>✓</i><h1 style="margin-top:12px">¡Gracias por tu compra!</h1><p class="mut">Tu pedido ha sido realizado con éxito.</p><div class="n"><b>Número de pedido: #${o.n}</b><br><small class="mut">Entrega estimada: 24 a 48 h</small></div><div style="max-width:320px;margin:auto"><a class="btn" href="#/cuenta">Ver mi pedido</a><p><a href="#/categorias" style="color:var(--g)">Seguir comprando</a></p></div></div>`]}
+function cue(){const o=store.get('orders',[]);return[0,'Mi cuenta',`<div class="box"><h3>Mis pedidos</h3>${o.length?o.map(x=>`<p><span>#${x.n} · ${x.fecha}</span><b>${money(x.total)}</b></p>`).join(''):'<p class="mut">Aún no tienes pedidos.</p>'}</div>`]}
+
+/* ===== 8. ENRUTADOR (cambia de pantalla según el # de la URL) ===== */
+function render(){clearInterval(tm);const [,p='',a='']=location.hash.slice(1).split('/');
+  const R={'':home,categorias:cat,producto:prod,ofertas:ofer,nosotros:nos,contacto:con,carrito:car,pago:pay,gracias:gra,cuenta:cue,buscar:bus};
+  $('#app').innerHTML=layout(p,(R[p]||home)(decodeURIComponent(a)));scrollTo(0,0);if(p=='ofertas')timer()}
+addEventListener('hashchange',render);load().then(render);render();
+</script></body></html>
