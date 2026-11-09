@@ -34,6 +34,11 @@ form label{display:block;font-size:12px;font-weight:600;color:var(--t);margin-to
 .ok-box{text-align:center;padding:40px;background:#fffdf5;border-radius:10px}.ok-box i{font-style:normal;display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;font-size:32px}.ok-box .n{background:#eaf4f3;border-radius:6px;padding:12px;margin:14px auto;max-width:320px}
 .img,.big,.mini{overflow:hidden}.img img,.big img,.mini img{width:100%;height:100%;object-fit:contain}
 .logo i{overflow:hidden}.logo i img{width:100%;height:100%;object-fit:contain}.hero .pic{overflow:hidden;min-height:240px}.hero .pic img{width:100%;height:100%;object-fit:cover}.tile i img{width:64px;height:64px;object-fit:contain}
+.card .img,.big,.mini{display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mini{display:inline-flex}
+.card .img{height:140px;padding:6px}
+.big{padding:20px}
+.card .img img,.big img,.mini img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply}
 footer{border-top:1px solid var(--l);margin-top:40px;padding:14px 0 24px;font-size:11px;color:var(--m);display:flex;justify-content:space-between}footer a{color:var(--g)}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 20px;border-radius:20px;opacity:0;transition:.25s;pointer-events:none}#toast.on{opacity:1}
 @media(max-width:800px){.g3,.g4,.g5,.hero,.det,.side,.cartw,.two{grid-template-columns:1fr 1fr}.hero,.det,.side,.cartw{grid-template-columns:1fr}nav{gap:18px;flex-wrap:wrap}.top{flex-wrap:wrap}}
