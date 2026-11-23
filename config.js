@@ -3,5 +3,5 @@
 // Nunca pongas aquí la Secret key.
 window.CONFIG = {
   url: 'https://tvuyzznpnrpgfbxrmsvc.supabase.co',
-  key: 'PEGA_AQUI_TU_PUBLISHABLE_KEY'
+  key: 'sb_publishable_uIk4hGzUo-9Erik9sVqriQ_R35rO8XE'
 };
